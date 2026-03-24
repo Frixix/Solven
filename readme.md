@@ -3,15 +3,17 @@
 Aplicación web personal para llevar el control de ingresos, gastos, balance, categorías y resúmenes financieros.
 
 ## estructura básica 
+```text
 finanzas-app/
 ├── README.md
-├── ESTADO_DEL_PROYECTO.md
-├── ROADMAP.md
-├── ARQUITECTURA.md
-├── REQUISITOS.md
-├── DECISIONES_TECNICAS.md
-├── IDEAS_FUTURAS.md
-├── INSTRUCCIONES_IA.md
+├── docs/
+│   ├── ESTADO_DEL_PROYECTO.md
+│   ├── ROADMAP.md
+│   ├── ARQUITECTURA.md
+│   ├── REQUISITOS.md
+│   ├── DECISIONES_TECNICAS.md
+│   ├── IDEAS_FUTURAS.md
+│   └── INSTRUCCIONES_IA.md
 │
 ├── src/
 │   ├── index.html
@@ -22,7 +24,7 @@ finanzas-app/
 │
 └── assets/
     └── img/
-    
+```
 ## Objetivo
 
 Construir una app sencilla, escalable y gratuita para uso personal, desarrollada inicialmente con HTML, CSS y JavaScript, y posteriormente migrada a React con integración de Supabase para sincronización entre dispositivos.
