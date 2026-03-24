@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finanzas App</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="app-header">
+      <h1>Finanzas App</h1>
+      <p>Controla tus ingresos y gastos de forma simple</p>
+    </header>
+
+    <main class="main-grid">
+      <section class="card">
+        <h2 class="section-title">Resumen general</h2>
+
+        <div class="summary">
+          <article class="summary-card income">
+            <h3>Ingresos</h3>
+            <p id="total-income">$0</p>
+          </article>
+
+          <article class="summary-card expense">
+            <h3>Gastos</h3>
+            <p id="total-expense">$0</p>
+          </article>
+
+          <article class="summary-card balance">
+            <h3>Balance</h3>
+            <p id="total-balance">$0</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Nueva transacción</h2>
+
+        <form id="transaction-form" class="form-grid">
+          <div class="form-group">
+            <label for="type">Tipo</label>
+            <select id="type" name="type" required>
+              <option value="">Selecciona una opción</option>
+              <option value="ingreso">Ingreso</option>
+              <option value="gasto">Gasto</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="amount">Monto</label>
+            <input
+              type="number"
+              id="amount"
+              name="amount"
+              placeholder="Ej: 150000"
+              min="0"
+              step="0.01"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="category">Categoría</label>
+            <select id="category" name="category" required>
+              <option value="">Selecciona una categoría</option>
+              <option value="salario">Salario</option>
+              <option value="freelance">Freelance</option>
+              <option value="comida">Comida</option>
+              <option value="transporte">Transporte</option>
+              <option value="estudio">Estudio</option>
+              <option value="salud">Salud</option>
+              <option value="entretenimiento">Entretenimiento</option>
+              <option value="ahorro">Ahorro</option>
+              <option value="otros">Otros</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="date">Fecha</label>
+            <input type="date" id="date" name="date" required />
+          </div>
+
+          <div class="form-group full">
+            <label for="description">Descripción</label>
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Escribe un detalle de la transacción"
+            ></textarea>
+          </div>
+
+          <div class="form-group full">
+            <button type="submit" class="btn btn-primary">
+              Guardar transacción
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Filtros</h2>
+
+        <div class="filters">
+          <div class="form-group">
+            <label for="filter-type">Filtrar por tipo</label>
+            <select id="filter-type">
+              <option value="">Todos</option>
+              <option value="ingreso">Ingresos</option>
+              <option value="gasto">Gastos</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="filter-category">Filtrar por categoría</label>
+            <select id="filter-category">
+              <option value="">Todas</option>
+              <option value="salario">Salario</option>
+              <option value="freelance">Freelance</option>
+              <option value="comida">Comida</option>
+              <option value="transporte">Transporte</option>
+              <option value="estudio">Estudio</option>
+              <option value="salud">Salud</option>
+              <option value="entretenimiento">Entretenimiento</option>
+              <option value="ahorro">Ahorro</option>
+              <option value="otros">Otros</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="filter-date">Filtrar por fecha</label>
+            <input type="date" id="filter-date" />
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-title">Historial de transacciones</h2>
+
+        <div id="transaction-list" class="transaction-list">
+          <div class="empty-state" id="empty-state">
+            Aún no hay transacciones registradas.
+          </div>
+
+          <!-- Ejemplo de item, luego JS lo generará dinámicamente -->
+          <!--
+          <article class="transaction-item">
+            <div class="transaction-info">
+              <h4>Pago mensual</h4>
+              <p>Categoría: salario</p>
+            </div>
+
+            <div class="transaction-meta">
+              <span class="amount income">+$1.500.000</span>
+              <span class="date">2026-03-23</span>
+
+              <div class="actions">
+                <button class="btn-secondary">Editar</button>
+                <button class="btn-danger">Eliminar</button>
+              </div>
+            </div>
+          </article>
+          -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./js/app.js"></script>
+</body>
+</html>
