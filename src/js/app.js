@@ -29,6 +29,8 @@ const categories = {
   gasto: [
     { value: "comida", label: "Comida" },
     { value: "transporte", label: "Transporte" },
+    {value: "gasolina", label: "Gasolina" },
+    { value: "vivienda", label: "Vivienda" },
     { value: "estudio", label: "Estudio" },
     { value: "salud", label: "Salud" },
     { value: "entretenimiento", label: "Entretenimiento" },
