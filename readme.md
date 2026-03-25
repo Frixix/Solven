@@ -2,6 +2,12 @@
 
 Aplicación web personal para llevar el control de ingresos, gastos, balance, categorías y resúmenes financieros.
 
+
+## page 
+
+https://frixix.github.io/Solven/
+
+
 ## estructura básica 
 ```text
 finanzas-app/
