@@ -338,6 +338,19 @@ textarea {
   display: none;
 }
 
+.filters {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0 20px;
+}
+
+.filters select,
+.filters input {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
 /* Responsive */
 @media (max-width: 900px) {
   .summary {

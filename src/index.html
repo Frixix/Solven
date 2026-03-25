@@ -3,17 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Finanzas App</title>
+  <title>Solventa</title>
   <link rel="stylesheet" href="./css/style.css" />
 </head>
 <body>
   <div class="container">
     <header class="app-header">
-      <h1>Finanzas App</h1>
+      <h1>Solventa</h1>
       <p>Controla tus ingresos y gastos de forma simple</p>
     </header>
 
     <main class="main-grid">
+
+      <!-- RESUMEN -->
       <section class="card">
         <h2 class="section-title">Resumen general</h2>
 
@@ -35,10 +37,12 @@
         </div>
       </section>
 
+      <!-- FORMULARIO -->
       <section class="card">
         <h2 class="section-title">Nueva transacción</h2>
 
         <form id="transaction-form" class="form-grid">
+
           <div class="form-group">
             <label for="type">Tipo</label>
             <select id="type" name="type" required>
@@ -84,16 +88,19 @@
 
           <div class="form-group full">
             <button type="submit" class="btn btn-primary">
-              Guardar transacción
+              Guardar
             </button>
           </div>
+
         </form>
       </section>
 
+      <!-- FILTROS -->
       <section class="card">
         <h2 class="section-title">Filtros</h2>
 
         <div class="filters">
+
           <div class="form-group">
             <label for="filter-type">Filtrar por tipo</label>
             <select id="filter-type">
@@ -104,28 +111,18 @@
           </div>
 
           <div class="form-group">
-            <label for="filter-category">Filtrar por categoría</label>
-            <select id="filter-category">
-              <option value="">Todas</option>
-              <option value="salario">Salario</option>
-              <option value="freelance">Freelance</option>
-              <option value="comida">Comida</option>
-              <option value="transporte">Transporte</option>
-              <option value="estudio">Estudio</option>
-              <option value="salud">Salud</option>
-              <option value="entretenimiento">Entretenimiento</option>
-              <option value="ahorro">Ahorro</option>
-              <option value="otros">Otros</option>
-            </select>
+            <label for="filter-search">Buscar</label>
+            <input
+              type="text"
+              id="filter-search"
+              placeholder="Buscar por descripción..."
+            />
           </div>
 
-          <div class="form-group">
-            <label for="filter-date">Filtrar por fecha</label>
-            <input type="date" id="filter-date" />
-          </div>
         </div>
       </section>
 
+      <!-- HISTORIAL -->
       <section class="card">
         <h2 class="section-title">Historial de transacciones</h2>
 
@@ -133,28 +130,9 @@
           <div class="empty-state" id="empty-state">
             Aún no hay transacciones registradas.
           </div>
-
-          <!-- Ejemplo de item, luego JS lo generará dinámicamente -->
-          <!--
-          <article class="transaction-item">
-            <div class="transaction-info">
-              <h4>Pago mensual</h4>
-              <p>Categoría: salario</p>
-            </div>
-
-            <div class="transaction-meta">
-              <span class="amount income">+$1.500.000</span>
-              <span class="date">2026-03-23</span>
-
-              <div class="actions">
-                <button class="btn-secondary">Editar</button>
-                <button class="btn-danger">Eliminar</button>
-              </div>
-            </div>
-          </article>
-          -->
         </div>
       </section>
+
     </main>
   </div>
 

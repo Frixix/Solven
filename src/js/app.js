@@ -10,7 +10,13 @@ const totalExpense = document.getElementById("total-expense");
 const totalBalance = document.getElementById("total-balance");
 
 let transactions = [];
+let editingId = null;
 
+let filters = {
+  type: "",
+  category: "",
+  search: "",
+};
 // ==========================
 // CATEGORÍAS
 // ==========================
@@ -42,10 +48,28 @@ function saveTransactions() {
   localStorage.setItem("transactions", JSON.stringify(transactions));
 }
 
-
 // ==========================
 // UTILIDADES
 // ==========================
+function validateForm(data) {
+  if (!data.type) {
+    alert("Debes seleccionar un tipo (ingreso o gasto)");
+    return false;
+  }
+
+  if (!data.amount || data.amount <= 0) {
+    alert("El monto debe ser mayor a 0");
+    return false;
+  }
+
+  if (!data.category) {
+    alert("Debes seleccionar una categoría");
+    return false;
+  }
+
+  return true;
+}
+
 function formatCurrency(value) {
   return new Intl.NumberFormat("es-CO", {
     style: "currency",
@@ -80,17 +104,65 @@ function setDefaultDateTime() {
 function updateCategories(type) {
   const categorySelect = document.getElementById("category");
 
-  // limpiar opciones
   categorySelect.innerHTML = `<option value="">Selecciona una categoría</option>`;
 
   if (!type) return;
 
   categories[type].forEach((cat) => {
-  const option = document.createElement("option");
-  option.value = cat.value;
-  option.textContent = cat.label;
-  categorySelect.appendChild(option);
-});
+    const option = document.createElement("option");
+    option.value = cat.value;
+    option.textContent = cat.label;
+    categorySelect.appendChild(option);
+  });
+}
+
+function getCategoryLabel(type, value) {
+  const category = categories[type]?.find((c) => c.value === value);
+  return category ? category.label : value;
+}
+
+function setFormMode() {
+  const btn = form.querySelector("button[type='submit']");
+  btn.textContent = editingId ? "Actualizar" : "Guardar";
+}
+
+function applyFilters(data) {
+  return data.filter((tx) => {
+    const matchType = filters.type ? tx.type === filters.type : true;
+
+    const matchCategory = filters.category
+      ? tx.category === filters.category
+      : true;
+
+    const matchSearch = filters.search
+      ? (tx.description || "")
+          .toLowerCase()
+          .includes(filters.search.toLowerCase())
+      : true;
+
+    return matchType && matchCategory && matchSearch;
+  });
+}
+// ==========================
+// EDITAR
+// ==========================
+function editTransaction(id) {
+  const tx = transactions.find((t) => t.id === id);
+  if (!tx) return;
+
+  editingId = id;
+
+  form.type.value = tx.type;
+  updateCategories(tx.type);
+
+  form.category.value = tx.category;
+  form.amount.value = tx.amount;
+  form.date.value = tx.date;
+  form.description.value = tx.description;
+
+  setFormMode();
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 // ==========================
@@ -112,7 +184,6 @@ function deleteTransaction(id) {
   updateUI();
 }
 
-
 // ==========================
 // RENDER
 // ==========================
@@ -124,10 +195,9 @@ function renderTransactions() {
     return;
   }
 
-  emptyState.style.display = "none";
+  const filtered = applyFilters(transactions);
 
-  // Ordenar por fecha (más reciente primero)
-  const sortedTransactions = [...transactions].sort(
+  const sortedTransactions = [...filtered].sort(
     (a, b) => new Date(b.date) - new Date(a.date)
   );
 
@@ -138,7 +208,7 @@ function renderTransactions() {
     item.innerHTML = `
       <div class="transaction-info">
         <h4>${tx.description || "Sin descripción"}</h4>
-        <p>Categoría: ${tx.category}</p>
+        <p>Categoría: ${getCategoryLabel(tx.type, tx.category)}</p>
       </div>
 
       <div class="transaction-meta">
@@ -149,6 +219,10 @@ function renderTransactions() {
         <span class="date">${formatDate(tx.date)}</span>
 
         <div class="actions">
+          <button class="btn-edit" onclick="editTransaction(${tx.id})">
+            Editar
+          </button>
+
           <button class="btn-danger" onclick="deleteTransaction(${tx.id})">
             Eliminar
           </button>
@@ -159,7 +233,6 @@ function renderTransactions() {
     list.appendChild(item);
   });
 }
-
 
 // ==========================
 // RESUMEN
@@ -183,7 +256,6 @@ function calculateSummary() {
   totalBalance.textContent = formatCurrency(balance);
 }
 
-
 // ==========================
 // UI
 // ==========================
@@ -191,7 +263,6 @@ function updateUI() {
   renderTransactions();
   calculateSummary();
 }
-
 
 // ==========================
 // EVENTOS
@@ -207,9 +278,18 @@ form.addEventListener("submit", (e) => {
     description: form.description.value,
   };
 
-  const newTransaction = createTransaction(data);
+  if (!validateForm(data)) return;
 
-  transactions.push(newTransaction);
+  if (editingId) {
+    transactions = transactions.map((tx) =>
+      tx.id === editingId ? { ...tx, ...data } : tx
+    );
+
+    editingId = null;
+  } else {
+    const newTransaction = createTransaction(data);
+    transactions.push(newTransaction);
+  }
 
   saveTransactions();
   updateUI();
@@ -217,6 +297,7 @@ form.addEventListener("submit", (e) => {
   form.reset();
   updateCategories("");
   setDefaultDateTime();
+  setFormMode();
 });
 
 form.type.addEventListener("change", (e) => {
@@ -229,6 +310,7 @@ form.type.addEventListener("change", (e) => {
 function init() {
   loadTransactions();
   setDefaultDateTime();
+  setFormMode();
   updateUI();
 }
 
