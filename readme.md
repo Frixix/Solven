@@ -25,9 +25,23 @@ finanzas-app/
 └── assets/
     └── img/
 ```
-## Objetivo
+##  Funcionalidades actuales (MVP)
 
-Construir una app sencilla, escalable y gratuita para uso personal, desarrollada inicialmente con HTML, CSS y JavaScript, y posteriormente migrada a React con integración de Supabase para sincronización entre dispositivos.
+- Registro de ingresos y gastos
+- Eliminación de transacciones
+- Cálculo automático de:
+  - ingresos totales
+  - gastos totales
+  - balance general
+- Persistencia de datos con `localStorage`
+- Formato de moneda en pesos colombianos (COP)
+- Fecha y hora automática
+- Visualización de fecha formateada
+- Orden de transacciones por más reciente
+- Categorías dinámicas según tipo de transacción
+
+---
+
 
 ## Visión del proyecto
 

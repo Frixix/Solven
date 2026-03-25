@@ -1,59 +1,105 @@
 # Estado del Proyecto
 
-## Nombre provisional
-Finanzas App
+## Nombre del proyecto
+Solventa
 
 ## Estado general
-En planeación
+En desarrollo
 
 ## Etapa actual
-Definición del alcance, arquitectura, fases y documentación base.
+MVP funcional completado y en fase de mejora incremental.
 
-## Objetivo inmediato
-Construir una versión MVP con HTML, CSS y JavaScript.
+## Objetivo actual
+Mejorar la aplicación existente, agregar nuevas funcionalidades y preparar la base para escalabilidad futura.
+
+---
 
 ## Avances actuales
 
-- Idea general del proyecto definida
-- Enfoque por fases establecido
-- Decisión de aprender React durante el proceso
-- Decisión de aprender Supabase para sincronización futura
-- Estructura documental inicial creada
+- Aplicación funcional de control de finanzas personales
+- Registro de ingresos y gastos
+- Eliminación de transacciones
+- Persistencia de datos con localStorage
+- Cálculo automático de ingresos, gastos y balance
+- Formateo de moneda (COP)
+- Manejo de fecha y hora automática
+- Formateo de fechas para visualización
+- Ordenamiento de transacciones por fecha
+- Sistema de categorías dinámicas según tipo de transacción
+- Render dinámico del DOM
+- Estructura de proyecto organizada
+- Documentación base creada (arquitectura, decisiones, roadmap)
+
+---
 
 ## Pendientes inmediatos
 
-- Definir funcionalidades exactas del MVP
-- Diseñar estructura de carpetas del código
-- Crear interfaz inicial
-- Construir lógica para registrar transacciones
-- Implementar almacenamiento local
+- Implementar edición de transacciones
+- Añadir validaciones más robustas en formularios
+- Mejorar experiencia de usuario (mensajes, feedback visual)
+- Implementar filtros por:
+  - tipo
+  - categoría
+  - rango de fechas
+- Mejorar estructura del código (posible modularización)
 
-## Tecnologías decididas
+---
 
-### Primera etapa
+## Tecnologías actuales
+
 - HTML
 - CSS
-- JavaScript
+- JavaScript (Vanilla)
 - localStorage
 
-### Segunda etapa
+---
+
+## Tecnologías planificadas
+
+### Siguiente etapa
 - IndexedDB
 
-### Tercera etapa
+### Etapas futuras
 - React
+- Supabase (autenticación y base de datos)
 
-### Cuarta etapa
-- Supabase
+---
 
-## Riesgos o retos identificados
+## Riesgos o retos actuales
 
-- Querer implementar demasiadas funciones al inicio
-- Migrar a React antes de comprender la lógica base
-- Diseñar mal la estructura de datos desde el principio
-- Mezclar demasiadas responsabilidades en un solo archivo
+- Escalar la aplicación sin perder claridad en el código
+- Mantener separación de responsabilidades
+- Evitar complejidad innecesaria antes de migrar a React
+- Diseñar correctamente la transición a backend
 
-## Decisión clave
-Se trabajará primero una versión simple y funcional antes de escalar.
+---
+
+## Decisiones activas
+
+- Mantener el enfoque en JavaScript puro hasta dominar la lógica
+- Mejorar progresivamente el código antes de migrar a nuevas tecnologías
+- Priorizar funcionalidades clave sobre extras visuales
+
+---
 
 ## Siguiente hito
-Tener una primera versión funcional del MVP.
+
+Implementar edición de transacciones y sistema de filtros funcional.
+
+---
+
+## Visión a corto plazo
+
+Tener una aplicación robusta en frontend puro que sirva como base sólida para migración a React.
+
+---
+
+## Visión a mediano plazo
+
+Migrar la aplicación a React manteniendo la lógica ya construida y mejorar la arquitectura mediante componentes.
+
+---
+
+## Visión a largo plazo
+
+Implementar autenticación y sincronización en la nube mediante Supabase, permitiendo acceso desde múltiples dispositivos.
