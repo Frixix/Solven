@@ -12,6 +12,7 @@ https://frixix.github.io/Solven/
 ```text
 finanzas-app/
 ├── README.md
+├── index.html
 ├── docs/
 │   ├── ESTADO_DEL_PROYECTO.md
 │   ├── ROADMAP.md
@@ -22,7 +23,6 @@ finanzas-app/
 │   └── INSTRUCCIONES_IA.md
 │
 ├── src/
-│   ├── index.html
 │   ├── css/
 │   │   └── style.css
 │   └── js/

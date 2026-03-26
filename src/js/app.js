@@ -5,6 +5,10 @@ const form = document.getElementById("transaction-form");
 const list = document.getElementById("transaction-list");
 const emptyState = document.getElementById("empty-state");
 
+const filterCategory = document.getElementById("filter-category");
+const filterType = document.getElementById("filter-type");
+const filterSearch = document.getElementById("filter-search");
+
 const totalIncome = document.getElementById("total-income");
 const totalExpense = document.getElementById("total-expense");
 const totalBalance = document.getElementById("total-balance");
@@ -17,6 +21,7 @@ let filters = {
   category: "",
   search: "",
 };
+
 // ==========================
 // CATEGORÍAS
 // ==========================
@@ -27,11 +32,17 @@ const categories = {
     { value: "otro", label: "Otro" },
   ],
   gasto: [
+    { value: "vivienda", label: "Vivienda" },
+    { value: "electricidad", label: "Electricidad" },
+    { value: "gas", label: "Gas" },
+    { value: "agua", label: "Agua" },
+    { value: "internet", label: "Internet" },
+    { value: "claro", label: "Claro" },
+    { value: "universidad", label: "Universidad" },
+    { value: "estudio", label: "Estudio" },
     { value: "comida", label: "Comida" },
     { value: "transporte", label: "Transporte" },
-    {value: "gasolina", label: "Gasolina" },
-    { value: "vivienda", label: "Vivienda" },
-    { value: "estudio", label: "Estudio" },
+    { value: "gasolina", label: "Gasolina" },
     { value: "salud", label: "Salud" },
     { value: "entretenimiento", label: "Entretenimiento" },
     { value: "otros", label: "Otros" },
@@ -145,6 +156,20 @@ function applyFilters(data) {
     return matchType && matchCategory && matchSearch;
   });
 }
+
+function updateFilterCategories(type) {
+  filterCategory.innerHTML = `<option value="">Todas</option>`;
+
+  if (!type) return;
+
+  categories[type].forEach((cat) => {
+    const option = document.createElement("option");
+    option.value = cat.value;
+    option.textContent = cat.label;
+    filterCategory.appendChild(option);
+  });
+}
+
 // ==========================
 // EDITAR
 // ==========================
@@ -192,12 +217,14 @@ function deleteTransaction(id) {
 function renderTransactions() {
   list.innerHTML = "";
 
-  if (transactions.length === 0) {
+  const filtered = applyFilters(transactions);
+
+  if (filtered.length === 0) {
     emptyState.style.display = "block";
     return;
   }
 
-  const filtered = applyFilters(transactions);
+  emptyState.style.display = "none";
 
   const sortedTransactions = [...filtered].sort(
     (a, b) => new Date(b.date) - new Date(a.date)
@@ -286,7 +313,6 @@ form.addEventListener("submit", (e) => {
     transactions = transactions.map((tx) =>
       tx.id === editingId ? { ...tx, ...data } : tx
     );
-
     editingId = null;
   } else {
     const newTransaction = createTransaction(data);
@@ -306,6 +332,29 @@ form.type.addEventListener("change", (e) => {
   updateCategories(e.target.value);
 });
 
+// Filtro por tipo
+filterType.addEventListener("change", (e) => {
+  filters.type = e.target.value;
+
+  filters.category = "";
+  filterCategory.value = "";
+
+  updateFilterCategories(filters.type);
+  updateUI();
+});
+
+// Filtro por categoría
+filterCategory.addEventListener("change", (e) => {
+  filters.category = e.target.value;
+  updateUI();
+});
+
+// Filtro por búsqueda
+filterSearch.addEventListener("input", (e) => {
+  filters.search = e.target.value;
+  updateUI();
+});
+
 // ==========================
 // INIT
 // ==========================
@@ -314,6 +363,7 @@ function init() {
   setDefaultDateTime();
   setFormMode();
   updateUI();
+  updateFilterCategories("");
 }
 
 init();
