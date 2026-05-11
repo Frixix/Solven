@@ -392,3 +392,15 @@ textarea {
     font-size: 2rem;
   }
 }
+
+.month-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.month-selector h2 {
+  font-size: 1.2rem;
+  color: #f8fafc;
+}

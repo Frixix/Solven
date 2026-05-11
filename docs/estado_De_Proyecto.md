@@ -103,3 +103,6 @@ Migrar la aplicación a React manteniendo la lógica ya construida y mejorar la 
 ## Visión a largo plazo
 
 Implementar autenticación y sincronización en la nube mediante Supabase, permitiendo acceso desde múltiples dispositivos.
+
+##  historial 
+cada mes, se impleenta un nuevo historial. dejado esto en 0 sin eliminar datos.  y pudiendo ir a los anteriores archivos

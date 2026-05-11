@@ -12,6 +12,11 @@ const filterSearch = document.getElementById("filter-search");
 const totalIncome = document.getElementById("total-income");
 const totalExpense = document.getElementById("total-expense");
 const totalBalance = document.getElementById("total-balance");
+const currentMonthText = document.getElementById("current-month");
+
+const prevMonthBtn = document.getElementById("prev-month");
+const nextMonthBtn = document.getElementById("next-month");
+
 
 let transactions = [];
 let editingId = null;
@@ -21,6 +26,10 @@ let filters = {
   category: "",
   search: "",
 };
+const currentDate = new Date();
+
+let selectedMonth = currentDate.getMonth() + 1;
+let selectedYear = currentDate.getFullYear();
 
 // ==========================
 // CATEGORÍAS
@@ -141,7 +150,12 @@ function setFormMode() {
 
 function applyFilters(data) {
   return data.filter((tx) => {
-    const matchType = filters.type ? tx.type === filters.type : true;
+    const matchMonth = tx.month === selectedMonth;
+    const matchYear = tx.year === selectedYear;
+
+    const matchType = filters.type
+      ? tx.type === filters.type
+      : true;
 
     const matchCategory = filters.category
       ? tx.category === filters.category
@@ -153,7 +167,13 @@ function applyFilters(data) {
           .includes(filters.search.toLowerCase())
       : true;
 
-    return matchType && matchCategory && matchSearch;
+    return (
+      matchMonth &&
+      matchYear &&
+      matchType &&
+      matchCategory &&
+      matchSearch
+    );
   });
 }
 
@@ -168,6 +188,26 @@ function updateFilterCategories(type) {
     option.textContent = cat.label;
     filterCategory.appendChild(option);
   });
+}
+
+function updateMonthDisplay() {
+  const monthNames = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
+
+  currentMonthText.textContent =
+    `${monthNames[selectedMonth - 1]} ${selectedYear}`;
 }
 
 // ==========================
@@ -196,9 +236,21 @@ function editTransaction(id) {
 // CRUD
 // ==========================
 function createTransaction(data) {
+  const transactionDate = new Date(data.date);
+
   return {
     id: Date.now(),
-    ...data,
+
+    type: data.type,
+    amount: data.amount,
+    category: data.category,
+    description: data.description,
+    date: data.date,
+
+    month: transactionDate.getMonth() + 1,
+    year: transactionDate.getFullYear(),
+
+    createdAt: new Date().toISOString(),
   };
 }
 
@@ -270,7 +322,9 @@ function calculateSummary() {
   let income = 0;
   let expense = 0;
 
-  transactions.forEach((tx) => {
+  const filteredTransactions = applyFilters(transactions);
+
+  filteredTransactions.forEach((tx) => {
     if (tx.type === "ingreso") {
       income += tx.amount;
     } else {
@@ -358,11 +412,41 @@ filterSearch.addEventListener("input", (e) => {
 // ==========================
 // INIT
 // ==========================
+prevMonthBtn.addEventListener("click", () => {
+  selectedMonth--;
+
+  if (selectedMonth < 1) {
+    selectedMonth = 12;
+    selectedYear--;
+  }
+
+  updateMonthDisplay();
+  updateUI();
+});
+
+nextMonthBtn.addEventListener("click", () => {
+  selectedMonth++;
+
+  if (selectedMonth > 12) {
+    selectedMonth = 1;
+    selectedYear++;
+  }
+
+  updateMonthDisplay();
+  updateUI();
+});
+
 function init() {
   loadTransactions();
+
   setDefaultDateTime();
+
   setFormMode();
+
+  updateMonthDisplay();
+
   updateUI();
+
   updateFilterCategories("");
 }
 
