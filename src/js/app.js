@@ -13,6 +13,7 @@ const totalIncome = document.getElementById("total-income");
 const totalExpense = document.getElementById("total-expense");
 const totalBalance = document.getElementById("total-balance");
 const monthlyInsights = document.getElementById("monthly-insights");
+const expenseChartCanvas = document.getElementById("expense-chart");
 const currentMonthText = document.getElementById("current-month");
 
 const prevMonthBtn = document.getElementById("prev-month");
@@ -21,6 +22,7 @@ const nextMonthBtn = document.getElementById("next-month");
 
 let transactions = [];
 let editingId = null;
+let expenseChart = null;
 
 let filters = {
   type: "",
@@ -427,12 +429,89 @@ function renderMonthlyInsights() {
 // ==========================
 // UI
 // ==========================
+function renderExpenseChart() {
+  const filteredTransactions = applyFilters(transactions);
 
+  const expenses = filteredTransactions.filter(
+    (tx) => tx.type === "gasto"
+  );
+
+  const categoryTotals = {};
+
+  expenses.forEach((tx) => {
+    if (!categoryTotals[tx.category]) {
+      categoryTotals[tx.category] = 0;
+    }
+
+    categoryTotals[tx.category] += tx.amount;
+  });
+
+  const labels = Object.keys(categoryTotals).map((category) =>
+    getCategoryLabel("gasto", category)
+  );
+
+  const data = Object.values(categoryTotals);
+
+  if (expenseChart) {
+    expenseChart.destroy();
+  }
+
+  if (labels.length === 0) {
+    return;
+  }
+
+  expenseChart = new Chart(expenseChartCanvas, {
+    type: "doughnut",
+
+    data: {
+      labels,
+
+      datasets: [
+        {
+          label: "Gastos",
+
+          data,
+
+          backgroundColor: [
+            "#ef4444",
+            "#f59e0b",
+            "#22c55e",
+            "#38bdf8",
+            "#8b5cf6",
+            "#ec4899",
+            "#14b8a6",
+            "#f97316",
+          ],
+
+          borderWidth: 2,
+        },
+      ],
+    },
+
+    options: {
+      responsive: true,
+
+      maintainAspectRatio: false,
+
+      plugins: {
+        legend: {
+          labels: {
+            color: "#e2e8f0",
+          },
+        },
+      },
+    },
+  });
+}
 
 function updateUI() {
   renderTransactions();
+
   calculateSummary();
+
   renderMonthlyInsights();
+
+  renderExpenseChart();
 }
 
 // ==========================
