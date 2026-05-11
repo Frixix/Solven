@@ -110,15 +110,32 @@ function formatDate(dateString) {
 }
 
 function setDefaultDateTime() {
-  const now = new Date();
+  const currentRealDate = new Date();
 
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  const hours = String(now.getHours()).padStart(2, "0");
-  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const isCurrentMonth =
+    selectedMonth === currentRealDate.getMonth() + 1 &&
+    selectedYear === currentRealDate.getFullYear();
 
-  const formatted = `${year}-${month}-${day}T${hours}:${minutes}`;
+  let date;
+
+  if (isCurrentMonth) {
+    date = currentRealDate;
+  } else {
+    date = new Date(selectedYear, selectedMonth - 1, 1, 12, 0);
+  }
+
+  const year = date.getFullYear();
+
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+
+  const day = String(date.getDate()).padStart(2, "0");
+
+  const hours = String(date.getHours()).padStart(2, "0");
+
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  const formatted =
+    `${year}-${month}-${day}T${hours}:${minutes}`;
 
   document.getElementById("date").value = formatted;
 }
