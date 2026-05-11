@@ -12,6 +12,7 @@ const filterSearch = document.getElementById("filter-search");
 const totalIncome = document.getElementById("total-income");
 const totalExpense = document.getElementById("total-expense");
 const totalBalance = document.getElementById("total-balance");
+const monthlyInsights = document.getElementById("monthly-insights");
 const currentMonthText = document.getElementById("current-month");
 
 const prevMonthBtn = document.getElementById("prev-month");
@@ -356,12 +357,82 @@ function calculateSummary() {
   totalBalance.textContent = formatCurrency(balance);
 }
 
+
+// ==========================
+// INSIGHTS
+// ==========================
+
+
+function renderMonthlyInsights() {
+  const filteredTransactions = applyFilters(transactions);
+
+  const expenses = filteredTransactions.filter(
+    (tx) => tx.type === "gasto"
+  );
+
+  if (expenses.length === 0) {
+    monthlyInsights.innerHTML = `
+      <p>No hay gastos registrados en este mes.</p>
+    `;
+    return;
+  }
+
+  const categoryTotals = {};
+
+  expenses.forEach((tx) => {
+    if (!categoryTotals[tx.category]) {
+      categoryTotals[tx.category] = 0;
+    }
+
+    categoryTotals[tx.category] += tx.amount;
+  });
+
+  let topCategory = null;
+  let topAmount = 0;
+
+  for (const category in categoryTotals) {
+    if (categoryTotals[category] > topAmount) {
+      topAmount = categoryTotals[category];
+      topCategory = category;
+    }
+  }
+
+  const totalExpenses = expenses.reduce(
+    (acc, tx) => acc + tx.amount,
+    0
+  );
+
+  const percentage =
+    ((topAmount / totalExpenses) * 100).toFixed(1);
+
+  monthlyInsights.innerHTML = `
+    <div class="insight-card">
+      <h3>Mayor gasto del mes</h3>
+
+      <p>
+        ${getCategoryLabel("gasto", topCategory)}
+      </p>
+
+      <strong>
+        ${formatCurrency(topAmount)}
+      </strong>
+
+      <span>
+        ${percentage}% de tus gastos mensuales
+      </span>
+    </div>
+  `;
+}
+
 // ==========================
 // UI
 // ==========================
+
+
 function updateUI() {
   renderTransactions();
   calculateSummary();
+  renderMonthlyInsights();
 }
 
 // ==========================
@@ -438,6 +509,7 @@ prevMonthBtn.addEventListener("click", () => {
   }
 
   updateMonthDisplay();
+  setDefaultDateTime();
   updateUI();
 });
 
@@ -450,6 +522,7 @@ nextMonthBtn.addEventListener("click", () => {
   }
 
   updateMonthDisplay();
+  setDefaultDateTime();
   updateUI();
 });
 

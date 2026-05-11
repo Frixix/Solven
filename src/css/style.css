@@ -404,3 +404,39 @@ textarea {
   font-size: 1.2rem;
   color: #f8fafc;
 }
+
+/* Tarjetas de insights */
+
+.insight-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  padding: 1rem;
+
+  border-radius: var(--radius-sm);
+
+  background: #0f172a;
+
+  border: 1px solid var(--border);
+}
+
+.insight-card h3 {
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.insight-card p {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.insight-card strong {
+  color: var(--danger);
+  font-size: 1.5rem;
+}
+
+.insight-card span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
