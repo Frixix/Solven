@@ -13,6 +13,7 @@ const totalIncome = document.getElementById("total-income");
 const totalExpense = document.getElementById("total-expense");
 const totalBalance = document.getElementById("total-balance");
 const monthlyInsights = document.getElementById("monthly-insights");
+const monthlyComparison = document.getElementById("monthly-comparison");
 const expenseChartCanvas = document.getElementById("expense-chart");
 const currentMonthText = document.getElementById("current-month");
 
@@ -426,6 +427,94 @@ function renderMonthlyInsights() {
   `;
 }
 
+
+/** Compara los gastos del mes seleccionado con el mes anterior y muestra si hubo un aumento o disminución, junto con el porcentaje de cambio. */
+function renderMonthlyComparison() {
+  const currentMonthTransactions = transactions.filter((tx) => {
+    const date = new Date(tx.date);
+
+    return (
+      date.getMonth() + 1 === selectedMonth &&
+      date.getFullYear() === selectedYear &&
+      tx.type === "gasto"
+    );
+  });
+
+  let previousMonth = selectedMonth - 1;
+  let previousYear = selectedYear;
+
+  if (previousMonth === 0) {
+    previousMonth = 12;
+    previousYear--;
+  }
+
+  const previousMonthTransactions = transactions.filter((tx) => {
+    const date = new Date(tx.date);
+
+    return (
+      date.getMonth() + 1 === previousMonth &&
+      date.getFullYear() === previousYear &&
+      tx.type === "gasto"
+    );
+  });
+
+  const currentTotal = currentMonthTransactions.reduce(
+    (acc, tx) => acc + tx.amount,
+    0
+  );
+
+  const previousTotal = previousMonthTransactions.reduce(
+    (acc, tx) => acc + tx.amount,
+    0
+  );
+
+  if (previousTotal === 0) {
+    monthlyComparison.innerHTML = `
+      <div class="comparison-card">
+        <h3>Comparación mensual</h3>
+
+        <p>
+          No hay datos suficientes del mes anterior.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
+  const difference = currentTotal - previousTotal;
+
+  const percentage =
+    ((Math.abs(difference) / previousTotal) * 100).toFixed(1);
+
+  const isIncrease = difference > 0;
+
+  monthlyComparison.innerHTML = `
+    <div class="comparison-card">
+      <h3>Comparación mensual</h3>
+
+      <p>
+        Mes anterior:
+        <strong>${formatCurrency(previousTotal)}</strong>
+      </p>
+
+      <p>
+        Mes actual:
+        <strong>${formatCurrency(currentTotal)}</strong>
+      </p>
+
+      <span class="${
+        isIncrease ? "comparison-danger" : "comparison-success"
+      }">
+        ${
+          isIncrease
+            ? `Tus gastos aumentaron un ${percentage}%`
+            : `Tus gastos disminuyeron un ${percentage}%`
+        }
+      </span>
+    </div>
+  `;
+}
 // ==========================
 // UI
 // ==========================
@@ -510,6 +599,8 @@ function updateUI() {
   calculateSummary();
 
   renderMonthlyInsights();
+
+  renderMonthlyComparison();
 
   renderExpenseChart();
 }

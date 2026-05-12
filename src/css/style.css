@@ -440,3 +440,55 @@ textarea {
   color: var(--muted);
   font-size: 0.9rem;
 }
+
+/* Gráficos */
+.chart-container {
+  position: relative;
+  width: 100%;
+  min-height: 350px;
+}
+
+.chart-container canvas {
+  width: 100% !important;
+  height: 350px !important;
+}
+
+/* Comparación mensual */
+.comparison-card {
+  display: flex;
+  flex-direction: column;
+
+  gap: 0.75rem;
+
+  padding: 1rem;
+
+  border-radius: var(--radius-sm);
+
+  background: #0f172a;
+
+  border: 1px solid var(--border);
+}
+
+.comparison-card h3 {
+  color: #f8fafc;
+}
+
+.comparison-card p {
+  color: var(--muted);
+}
+
+.comparison-card strong {
+  color: var(--text);
+}
+
+.comparison-success {
+  color: var(--success);
+
+  font-weight: 700;
+}
+
+.comparison-danger {
+  color: var(--danger);
+
+  font-weight: 700;
+}
