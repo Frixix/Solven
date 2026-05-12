@@ -12,6 +12,21 @@ const filterSearch = document.getElementById("filter-search");
 const totalIncome = document.getElementById("total-income");
 const totalExpense = document.getElementById("total-expense");
 const totalBalance = document.getElementById("total-balance");
+const monthlyGoalInput =
+  document.getElementById("monthly-goal");
+
+const saveGoalBtn =
+  document.getElementById("save-goal-btn");
+
+const progressFill =
+  document.getElementById("progress-fill");
+
+const goalPercentage =
+  document.getElementById("goal-percentage");
+
+const goalStatus =
+  document.getElementById("goal-status");
+  x
 const historicalIncome =
   document.getElementById("historical-income");
 
@@ -33,6 +48,8 @@ let transactions = [];
 let editingId = null;
 let expenseChart = null;
 
+
+let monthlyGoals = {};
 let filters = {
   type: "",
   category: "",
@@ -79,6 +96,22 @@ function loadTransactions() {
 }
 
 function saveTransactions() {
+
+  function saveGoals() {
+    localStorage.setItem(
+      "monthlyGoals",
+      JSON.stringify(monthlyGoals)
+    );
+  }
+
+  function loadGoals() {
+    const data =
+      localStorage.getItem("monthlyGoals");
+
+    monthlyGoals = data
+      ? JSON.parse(data)
+      : {};
+  }
   localStorage.setItem("transactions", JSON.stringify(transactions));
 }
 
@@ -549,6 +582,63 @@ function calculateHistoricalBalance() {
   historicalBalance.textContent =
     formatCurrency(totalHistoricalBalance);
 }
+
+function renderMonthlyGoal() {
+  const key =
+    `${selectedYear}-${selectedMonth}`;
+
+  const goal = monthlyGoals[key] || 0;
+
+  monthlyGoalInput.value = goal || "";
+
+  const currentMonthTransactions =
+    transactions.filter((tx) => {
+      const date = new Date(tx.date);
+
+      return (
+        date.getMonth() + 1 === selectedMonth &&
+        date.getFullYear() === selectedYear
+      );
+    });
+
+  let income = 0;
+  let expense = 0;
+
+  currentMonthTransactions.forEach((tx) => {
+    if (tx.type === "ingreso") {
+      income += tx.amount;
+    } else {
+      expense += tx.amount;
+    }
+  });
+
+  const balance = income - expense;
+
+  if (goal <= 0) {
+    progressFill.style.width = "0%";
+
+    goalPercentage.textContent = "0%";
+
+    goalStatus.textContent =
+      "Aún no hay meta configurada.";
+
+    return;
+  }
+
+  const percentage =
+    Math.min((balance / goal) * 100, 100);
+
+  progressFill.style.width =
+    `${percentage}%`;
+
+  goalPercentage.textContent =
+    `${percentage.toFixed(1)}%`;
+
+  goalStatus.textContent =
+    `Has acumulado ${formatCurrency(balance)}
+    de ${formatCurrency(goal)}`;
+}
+
 // ==========================
 // UI
 // ==========================
@@ -632,6 +722,8 @@ function updateUI() {
 
   calculateSummary();
 
+  renderMonthlyGoal();
+
   calculateHistoricalBalance();
 
   renderMonthlyInsights();
@@ -703,6 +795,20 @@ filterSearch.addEventListener("input", (e) => {
   updateUI();
 });
 
+
+saveGoalBtn.addEventListener("click", () => {
+  const key =
+    `${selectedYear}-${selectedMonth}`;
+
+  monthlyGoals[key] =
+    Number(monthlyGoalInput.value);
+
+  saveGoals();
+
+  renderMonthlyGoal();
+});
+
+
 // ==========================
 // INIT
 // ==========================
@@ -734,6 +840,9 @@ nextMonthBtn.addEventListener("click", () => {
 
 function init() {
   loadTransactions();
+
+
+  loadGoals();
 
   setDefaultDateTime();
 

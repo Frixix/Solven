@@ -147,6 +147,58 @@
         </form>
       </section>
 
+              
+        <section class="card">
+          <h2 class="section-title">
+            Meta financiera mensual
+          </h2>
+
+          <div class="goal-container">
+
+            <div class="form-group">
+              <label for="monthly-goal">
+                Meta de ahorro
+              </label>
+
+              <input
+                type="number"
+                id="monthly-goal"
+                placeholder="Ej: 1000000"
+              />
+            </div>
+
+            <button
+              id="save-goal-btn"
+              class="btn btn-primary"
+            >
+              Guardar meta
+            </button>
+
+            <div class="goal-progress">
+
+              <div class="goal-progress-header">
+                <span>Progreso</span>
+
+                <span id="goal-percentage">
+                  0%
+                </span>
+              </div>
+
+              <div class="progress-bar">
+                <div
+                  id="progress-fill"
+                  class="progress-fill"
+                ></div>
+              </div>
+
+              <p id="goal-status">
+                Aún no hay meta configurada.
+              </p>
+
+            </div>
+
+          </div>
+        </section>
       <!-- FILTROS -->
       <div class="form-group">
         <label for="filter-category">Filtrar por categoría</label>
