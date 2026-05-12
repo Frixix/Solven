@@ -12,6 +12,14 @@ const filterSearch = document.getElementById("filter-search");
 const totalIncome = document.getElementById("total-income");
 const totalExpense = document.getElementById("total-expense");
 const totalBalance = document.getElementById("total-balance");
+const historicalIncome =
+  document.getElementById("historical-income");
+
+const historicalExpense =
+  document.getElementById("historical-expense");
+
+const historicalBalance =
+  document.getElementById("historical-balance");
 const monthlyInsights = document.getElementById("monthly-insights");
 const monthlyComparison = document.getElementById("monthly-comparison");
 const expenseChartCanvas = document.getElementById("expense-chart");
@@ -515,6 +523,32 @@ function renderMonthlyComparison() {
     </div>
   `;
 }
+/** Calcula el balance histórico sumando todos los ingresos y restando todos los gastos registrados, sin importar el mes o año. Muestra el total de ingresos, gastos y el balance resultante. */
+function calculateHistoricalBalance() {
+  let totalHistoricalIncome = 0;
+
+  let totalHistoricalExpense = 0;
+
+  transactions.forEach((tx) => {
+    if (tx.type === "ingreso") {
+      totalHistoricalIncome += tx.amount;
+    } else {
+      totalHistoricalExpense += tx.amount;
+    }
+  });
+
+  const totalHistoricalBalance =
+    totalHistoricalIncome - totalHistoricalExpense;
+
+  historicalIncome.textContent =
+    formatCurrency(totalHistoricalIncome);
+
+  historicalExpense.textContent =
+    formatCurrency(totalHistoricalExpense);
+
+  historicalBalance.textContent =
+    formatCurrency(totalHistoricalBalance);
+}
 // ==========================
 // UI
 // ==========================
@@ -597,6 +631,8 @@ function updateUI() {
   renderTransactions();
 
   calculateSummary();
+
+  calculateHistoricalBalance();
 
   renderMonthlyInsights();
 
