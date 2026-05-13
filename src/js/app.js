@@ -26,7 +26,6 @@ const goalPercentage =
 
 const goalStatus =
   document.getElementById("goal-status");
-  x
 const historicalIncome =
   document.getElementById("historical-income");
 
@@ -60,16 +59,9 @@ let filters = {
 // MES ACTUAL
 // ==========================
 
-let selectedMonth = new Date().getMonth();
+let selectedMonth =
+  new Date().getMonth() + 1
 let selectedYear = new Date().getFullYear();
-
-// ==========================
-// FECHA ACTUAL
-// ==========================
-const currentDate = new Date();
-
-let selectedMonth = currentDate.getMonth() + 1;
-let selectedYear = currentDate.getFullYear();
 
 // ==========================
 // CATEGORÍAS
@@ -107,23 +99,26 @@ function loadTransactions() {
 }
 
 function saveTransactions() {
+  localStorage.setItem(
+    "transactions",
+    JSON.stringify(transactions)
+  );
+}
 
-  function saveGoals() {
-    localStorage.setItem(
-      "monthlyGoals",
-      JSON.stringify(monthlyGoals)
-    );
-  }
+function saveGoals() {
+  localStorage.setItem(
+    "monthlyGoals",
+    JSON.stringify(monthlyGoals)
+  );
+}
 
-  function loadGoals() {
-    const data =
-      localStorage.getItem("monthlyGoals");
+function loadGoals() {
+  const data =
+    localStorage.getItem("monthlyGoals");
 
-    monthlyGoals = data
-      ? JSON.parse(data)
-      : {};
-  }
-  localStorage.setItem("transactions", JSON.stringify(transactions));
+  monthlyGoals = data
+    ? JSON.parse(data)
+    : {};
 }
 
 // ==========================
@@ -287,7 +282,7 @@ function getMonthName(month) {
     "Diciembre",
   ];
 
-  return months[month];
+  return months[month - 1];
 }
 
 function updateMonthUI() {
