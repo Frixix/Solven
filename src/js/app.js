@@ -39,9 +39,6 @@ const monthlyComparison = document.getElementById("monthly-comparison");
 const expenseChartCanvas = document.getElementById("expense-chart");
 const currentMonthText = document.getElementById("current-month");
 
-const prevMonthBtn = document.getElementById("prev-month");
-const nextMonthBtn = document.getElementById("next-month");
-
 
 let transactions = [];
 let editingId = null;
@@ -874,31 +871,6 @@ saveGoalBtn.addEventListener("click", () => {
 // ==========================
 // INIT
 // ==========================
-prevMonthBtn.addEventListener("click", () => {
-  selectedMonth--;
-
-  if (selectedMonth < 1) {
-    selectedMonth = 12;
-    selectedYear--;
-  }
-
-  updateMonthDisplay();
-  setDefaultDateTime();
-  updateUI();
-});
-
-nextMonthBtn.addEventListener("click", () => {
-  selectedMonth++;
-
-  if (selectedMonth > 12) {
-    selectedMonth = 1;
-    selectedYear++;
-  }
-
-  updateMonthDisplay();
-  setDefaultDateTime();
-  updateUI();
-});
 
 function init() {
   loadTransactions();
