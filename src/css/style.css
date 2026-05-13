@@ -1,4 +1,11 @@
 :root {
+
+  --space-xs: 0.35rem;
+  --space-sm: 0.6rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+
+
   --bg: #0f172a;
   --surface: #1e293b;
   --surface-2: #334155;
@@ -138,8 +145,18 @@ a {
   color: var(--danger);
 }
 
+.summary-card.balance {
+  background: linear-gradient(
+    145deg,
+    rgba(14, 165, 233, 0.15),
+    rgba(30, 41, 59, 0.95)
+  );
+
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
 .summary-card.balance p {
-  color: var(--primary);
+  font-size: 1.8rem;
 }
 
 /* Secciones */
@@ -262,9 +279,11 @@ textarea {
   transition: var(--transition);
 }
 
-.transaction-item:hover {
-  border-color: var(--primary);
+.transaction-item:hover,
+.summary-card:hover {
   transform: translateY(-2px);
+
+  border-color: rgba(56, 189, 248, 0.45);
 }
 
 .transaction-info h4 {
@@ -336,19 +355,6 @@ textarea {
 
 .hidden {
   display: none;
-}
-
-.filters {
-  display: flex;
-  gap: 10px;
-  margin: 10px 0 20px;
-}
-
-.filters select,
-.filters input {
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
 }
 
 /* Responsive */
