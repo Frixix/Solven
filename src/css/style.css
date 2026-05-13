@@ -589,3 +589,48 @@ textarea {
 #goal-status {
   color: var(--muted);
 }
+
+
+/* Cards compactas */
+
+.summary-card,
+.insight-card,
+.comparison-card,
+.goal-container {
+  backdrop-filter: blur(10px);
+}
+
+/* Títulos más pequeños */
+
+.section-title {
+  font-size: 1.05rem;
+
+  margin-bottom: 0.85rem;
+
+  letter-spacing: 0.3px;
+}
+
+/* Más compacto */
+
+.card {
+  padding: 1.2rem;
+}
+
+/* Inputs más modernos */
+
+input,
+select,
+textarea {
+  background: rgba(15, 23, 42, 0.8);
+
+  border: 1px solid rgba(71, 85, 105, 0.45);
+}
+
+/* Hover elegante */
+
+.transaction-item:hover,
+.summary-card:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(56, 189, 248, 0.45);
+}

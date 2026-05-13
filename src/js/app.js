@@ -55,6 +55,17 @@ let filters = {
   category: "",
   search: "",
 };
+
+// ==========================
+// MES ACTUAL
+// ==========================
+
+let selectedMonth = new Date().getMonth();
+let selectedYear = new Date().getFullYear();
+
+// ==========================
+// FECHA ACTUAL
+// ==========================
 const currentDate = new Date();
 
 let selectedMonth = currentDate.getMonth() + 1;
@@ -212,26 +223,30 @@ function setFormMode() {
 
 function applyFilters(data) {
   return data.filter((tx) => {
-    const matchMonth = tx.month === selectedMonth;
-    const matchYear = tx.year === selectedYear;
 
-    const matchType = filters.type
-      ? tx.type === filters.type
-      : true;
+    const txDate = new Date(tx.date);
 
-    const matchCategory = filters.category
-      ? tx.category === filters.category
-      : true;
+    const sameMonth =
+      txDate.getMonth() === selectedMonth &&
+      txDate.getFullYear() === selectedYear;
 
-    const matchSearch = filters.search
-      ? (tx.description || "")
-          .toLowerCase()
-          .includes(filters.search.toLowerCase())
-      : true;
+    const matchType =
+      filters.type ? tx.type === filters.type : true;
+
+    const matchCategory =
+      filters.category
+        ? tx.category === filters.category
+        : true;
+
+    const matchSearch =
+      filters.search
+        ? (tx.description || "")
+            .toLowerCase()
+            .includes(filters.search.toLowerCase())
+        : true;
 
     return (
-      matchMonth &&
-      matchYear &&
+      sameMonth &&
       matchType &&
       matchCategory &&
       matchSearch
@@ -250,6 +265,55 @@ function updateFilterCategories(type) {
     option.textContent = cat.label;
     filterCategory.appendChild(option);
   });
+}
+
+// ==========================
+// MANEJO DE MESES
+// ==========================
+
+function getMonthName(month) {
+  const months = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
+
+  return months[month];
+}
+
+function updateMonthUI() {
+  const monthLabel = document.getElementById("current-month");
+
+  if (!monthLabel) return;
+
+  monthLabel.textContent =
+    `${getMonthName(selectedMonth)} ${selectedYear}`;
+}
+
+function changeMonth(direction) {
+  selectedMonth += direction;
+
+  if (selectedMonth > 11) {
+    selectedMonth = 0;
+    selectedYear++;
+  }
+
+  if (selectedMonth < 0) {
+    selectedMonth = 11;
+    selectedYear--;
+  }
+
+  updateMonthUI();
+  updateUI();
 }
 
 function updateMonthDisplay() {
@@ -381,17 +445,20 @@ function renderTransactions() {
 // RESUMEN
 // ==========================
 function calculateSummary() {
+
+  const filtered = applyFilters(transactions);
+
   let income = 0;
   let expense = 0;
 
-  const filteredTransactions = applyFilters(transactions);
+  filtered.forEach((tx) => {
 
-  filteredTransactions.forEach((tx) => {
     if (tx.type === "ingreso") {
       income += tx.amount;
     } else {
       expense += tx.amount;
     }
+
   });
 
   const balance = income - expense;
@@ -853,6 +920,8 @@ function init() {
   updateUI();
 
   updateFilterCategories("");
+
+  updateMonthUI();
 }
 
 init();
