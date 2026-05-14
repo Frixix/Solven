@@ -1,4 +1,29 @@
 // ==========================
+// SUPABASE
+// ==========================
+
+const SUPABASE_URL =
+  "https://hgarfttbkoqvtqczfqkx.supabase.co";
+
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhnYXJmdHRia29xdnRxY3pmcWt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MTAyNjksImV4cCI6MjA5NDI4NjI2OX0.YJ3LQmlir9b8KWMbRxWu6hqrQY8YeC2TaWA8IwySybQ";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+// ==========================
+// TEST CONEXION
+// ==========================
+
+async function testConnection() {
+  console.log("Supabase conectado:", supabaseClient);
+}
+
+testConnection();
+
+// ==========================
 // SELECTORES
 // ==========================
 const form = document.getElementById("transaction-form");
@@ -464,6 +489,8 @@ function updateUI() {
   renderMonthlyInsights();
   renderMonthlyComparison();
   renderExpenseChart();
+
+    renderAnalytics();
 }
 
 // ==========================
@@ -511,6 +538,373 @@ saveGoalBtn.addEventListener("click", () => {
   monthlyGoals[key] = Number(monthlyGoalInput.value);
   saveGoals(); renderMonthlyGoal();
 });
+
+
+
+// ==========================
+// ANALYTICS: Evolución histórica, Balance acumulado, Tendencia financiera
+// Se integra al app.js existente — agregar al final antes de init()
+// y llamar renderAnalytics() dentro de updateUI()
+// ==========================
+
+let evolutionChart  = null;
+let balanceChart    = null;
+let tendencyChart   = null;
+
+// Obtiene los últimos N meses desde el mes actual, en orden cronológico
+// Retorna array de { month (base-0), year, label }
+function getLastNMonths(n) {
+  const result = [];
+  let m = selectedMonth;
+  let y = selectedYear;
+  for (let i = 0; i < n; i++) {
+    result.unshift({ month: m, year: y, label: `${MONTH_NAMES[m].slice(0,3)} ${y}` });
+    m--;
+    if (m < 0) { m = 11; y--; }
+  }
+  return result;
+}
+
+// Suma ingresos y gastos de un mes/año concreto
+function getTotalsForMonth(month, year) {
+  let income = 0, expense = 0;
+  transactions.forEach((tx) => {
+    const p = parseDateString(tx.date);
+    if (p.month === month && p.year === year) {
+      if (tx.type === "ingreso") income += tx.amount;
+      else expense += tx.amount;
+    }
+  });
+  return { income, expense, balance: income - expense };
+}
+
+// ==========================
+// TARJETAS DE RESUMEN ANALÍTICO
+// ==========================
+function renderAnalyticCards() {
+  const months6 = getLastNMonths(6);
+
+  // Promedio mensual de ingresos y gastos (últimos 6 meses)
+  let totalInc = 0, totalExp = 0, monthsWithData = 0;
+  months6.forEach(({ month, year }) => {
+    const t = getTotalsForMonth(month, year);
+    if (t.income > 0 || t.expense > 0) {
+      totalInc += t.income;
+      totalExp += t.expense;
+      monthsWithData++;
+    }
+  });
+  const avgIncome  = monthsWithData ? totalInc / monthsWithData : 0;
+  const avgExpense = monthsWithData ? totalExp / monthsWithData : 0;
+
+  // Mejor mes (mayor balance)
+  let bestMonth = null, bestBalance = -Infinity;
+  months6.forEach(({ month, year, label }) => {
+    const { balance } = getTotalsForMonth(month, year);
+    if (balance > bestBalance) { bestBalance = balance; bestMonth = label; }
+  });
+
+  // Tendencia: compara últimos 2 meses
+  const cur  = getTotalsForMonth(selectedMonth, selectedYear);
+  let prevM  = selectedMonth - 1, prevY = selectedYear;
+  if (prevM < 0) { prevM = 11; prevY--; }
+  const prev = getTotalsForMonth(prevM, prevY);
+  const trendPct = prev.expense > 0
+    ? (((cur.expense - prev.expense) / prev.expense) * 100).toFixed(1)
+    : null;
+  const trendUp = cur.expense > prev.expense;
+
+  const container = document.getElementById("analytic-cards");
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="analytic-card">
+      <div class="analytic-icon">📈</div>
+      <div class="analytic-body">
+        <span class="analytic-label">Ingreso promedio mensual</span>
+        <strong class="analytic-value income">${formatCurrency(avgIncome)}</strong>
+        <span class="analytic-sub">${monthsWithData ? `Últimos ${monthsWithData} meses` : "Sin datos aún"}</span>
+      </div>
+    </div>
+    <div class="analytic-card">
+      <div class="analytic-icon">📉</div>
+      <div class="analytic-body">
+        <span class="analytic-label">Gasto promedio mensual</span>
+        <strong class="analytic-value expense">${formatCurrency(avgExpense)}</strong>
+        <span class="analytic-sub">${monthsWithData ? `Últimos ${monthsWithData} meses` : "Sin datos aún"}</span>
+      </div>
+    </div>
+    <div class="analytic-card">
+      <div class="analytic-icon">🏆</div>
+      <div class="analytic-body">
+        <span class="analytic-label">Mejor balance reciente</span>
+        <strong class="analytic-value ${bestBalance >= 0 ? "income" : "expense"}">${formatCurrency(bestBalance === -Infinity ? 0 : bestBalance)}</strong>
+        <span class="analytic-sub">${bestMonth || "Sin datos"}</span>
+      </div>
+    </div>
+    <div class="analytic-card">
+      <div class="analytic-icon">${trendUp ? "🔴" : "🟢"}</div>
+      <div class="analytic-body">
+        <span class="analytic-label">Tendencia de gastos</span>
+        <strong class="analytic-value ${trendUp ? "expense" : "income"}">
+          ${trendPct !== null ? `${trendUp ? "+" : ""}${trendPct}%` : "—"}
+        </strong>
+        <span class="analytic-sub">vs mes anterior</span>
+      </div>
+    </div>`;
+}
+
+// ==========================
+// GRÁFICA 1: Evolución histórica (barras ingresos vs gastos, últimos 6 meses)
+// ==========================
+function renderEvolutionChart() {
+  const canvas = document.getElementById("evolution-chart");
+  if (!canvas) return;
+
+  const months = getLastNMonths(6);
+  const labels  = months.map((m) => m.label);
+  const incomes  = months.map(({ month, year }) => getTotalsForMonth(month, year).income);
+  const expenses = months.map(({ month, year }) => getTotalsForMonth(month, year).expense);
+
+  if (evolutionChart) evolutionChart.destroy();
+
+  evolutionChart = new Chart(canvas, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "Ingresos",
+          data: incomes,
+          backgroundColor: "rgba(34,197,94,0.75)",
+          borderColor: "#22c55e",
+          borderWidth: 1.5,
+          borderRadius: 6,
+        },
+        {
+          label: "Gastos",
+          data: expenses,
+          backgroundColor: "rgba(239,68,68,0.75)",
+          borderColor: "#ef4444",
+          borderWidth: 1.5,
+          borderRadius: 6,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: "#e2e8f0", font: { size: 12 } } },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => ` ${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y)}`,
+          },
+        },
+      },
+      scales: {
+        x: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(71,85,105,0.3)" } },
+        y: {
+          ticks: {
+            color: "#94a3b8",
+            callback: (v) => {
+              if (v >= 1_000_000) return `$${(v/1_000_000).toFixed(1)}M`;
+              if (v >= 1_000)    return `$${(v/1_000).toFixed(0)}K`;
+              return `$${v}`;
+            },
+          },
+          grid: { color: "rgba(71,85,105,0.3)" },
+        },
+      },
+    },
+  });
+}
+
+// ==========================
+// GRÁFICA 2: Balance acumulado mensual (línea)
+// ==========================
+function renderBalanceChart() {
+  const canvas = document.getElementById("balance-chart");
+  if (!canvas) return;
+
+  const months = getLastNMonths(6);
+  const labels  = months.map((m) => m.label);
+
+  // Balance acumulado: suma progresiva de todos los balances mes a mes
+  let accumulated = 0;
+  const accBalances = months.map(({ month, year }) => {
+    const { balance } = getTotalsForMonth(month, year);
+    accumulated += balance;
+    return accumulated;
+  });
+
+  // Balance neto de cada mes (sin acumular)
+  const monthlyBalances = months.map(({ month, year }) =>
+    getTotalsForMonth(month, year).balance
+  );
+
+  if (balanceChart) balanceChart.destroy();
+
+  balanceChart = new Chart(canvas, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "Balance acumulado",
+          data: accBalances,
+          borderColor: "#38bdf8",
+          backgroundColor: "rgba(56,189,248,0.12)",
+          borderWidth: 2.5,
+          pointBackgroundColor: "#38bdf8",
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          fill: true,
+          tension: 0.4,
+        },
+        {
+          label: "Balance mensual",
+          data: monthlyBalances,
+          borderColor: "#8b5cf6",
+          backgroundColor: "rgba(139,92,246,0.08)",
+          borderWidth: 2,
+          pointBackgroundColor: "#8b5cf6",
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          fill: false,
+          tension: 0.4,
+          borderDash: [5, 4],
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: "#e2e8f0", font: { size: 12 } } },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => ` ${ctx.dataset.label}: ${formatCurrency(ctx.parsed.y)}`,
+          },
+        },
+      },
+      scales: {
+        x: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(71,85,105,0.3)" } },
+        y: {
+          ticks: {
+            color: "#94a3b8",
+            callback: (v) => {
+              if (Math.abs(v) >= 1_000_000) return `$${(v/1_000_000).toFixed(1)}M`;
+              if (Math.abs(v) >= 1_000)    return `$${(v/1_000).toFixed(0)}K`;
+              return `$${v}`;
+            },
+          },
+          grid: { color: "rgba(71,85,105,0.3)" },
+        },
+      },
+    },
+  });
+}
+
+// ==========================
+// GRÁFICA 3: Tendencia financiera (área — ahorro % del ingreso por mes)
+// ==========================
+function renderTendencyChart() {
+  const canvas = document.getElementById("tendency-chart");
+  if (!canvas) return;
+
+  const months = getLastNMonths(6);
+  const labels  = months.map((m) => m.label);
+
+  // % de ahorro = (ingreso - gasto) / ingreso * 100
+  const savingsRate = months.map(({ month, year }) => {
+    const { income, expense } = getTotalsForMonth(month, year);
+    if (income === 0) return 0;
+    return parseFloat(((income - expense) / income * 100).toFixed(1));
+  });
+
+  // Ratio gasto/ingreso
+  const spendRate = months.map(({ month, year }) => {
+    const { income, expense } = getTotalsForMonth(month, year);
+    if (income === 0) return 0;
+    return parseFloat(((expense / income) * 100).toFixed(1));
+  });
+
+  if (tendencyChart) tendencyChart.destroy();
+
+  tendencyChart = new Chart(canvas, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "% Ahorro",
+          data: savingsRate,
+          borderColor: "#22c55e",
+          backgroundColor: "rgba(34,197,94,0.15)",
+          borderWidth: 2.5,
+          pointBackgroundColor: savingsRate.map((v) => v >= 0 ? "#22c55e" : "#ef4444"),
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          fill: true,
+          tension: 0.4,
+        },
+        {
+          label: "% Gasto sobre ingreso",
+          data: spendRate,
+          borderColor: "#f59e0b",
+          backgroundColor: "rgba(245,158,11,0.08)",
+          borderWidth: 2,
+          pointBackgroundColor: "#f59e0b",
+          pointRadius: 4,
+          fill: false,
+          tension: 0.4,
+          borderDash: [4, 3],
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: "#e2e8f0", font: { size: 12 } } },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y}%`,
+          },
+        },
+        annotation: {
+          annotations: {
+            zeroLine: {
+              type: "line",
+              yMin: 0, yMax: 0,
+              borderColor: "rgba(239,68,68,0.5)",
+              borderWidth: 1,
+              borderDash: [4, 4],
+            },
+          },
+        },
+      },
+      scales: {
+        x: { ticks: { color: "#94a3b8" }, grid: { color: "rgba(71,85,105,0.3)" } },
+        y: {
+          ticks: { color: "#94a3b8", callback: (v) => `${v}%` },
+          grid: { color: "rgba(71,85,105,0.3)" },
+        },
+      },
+    },
+  });
+}
+
+// ==========================
+// RENDER GENERAL DE ANALYTICS
+// ==========================
+function renderAnalytics() {
+  renderAnalyticCards();
+  renderEvolutionChart();
+  renderBalanceChart();
+  renderTendencyChart();
+}
 
 // ==========================
 // INIT

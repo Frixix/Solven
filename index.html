@@ -37,7 +37,29 @@
 
       <!-- RESUMEN -->
         
-        <section class="card">
+
+      <section class="card">
+        <h2 class="section-title">Resumen general</h2>
+
+        <div class="summary">
+          <article class="summary-card income">
+            <h3>Ingresos</h3>
+            <p id="total-income">$0</p>
+          </article>
+
+          <article class="summary-card expense">
+            <h3>Gastos</h3>
+            <p id="total-expense">$0</p>
+          </article>
+
+          <article class="summary-card balance">
+            <h3>Balance</h3>
+            <p id="total-balance">$0</p>
+          </article>
+        </div>
+      </section>
+
+              <section class="card">
           <h2 class="section-title">
             Balance acumulado
           </h2>
@@ -70,28 +92,6 @@
 
           </div>
         </section>
-
-
-      <section class="card">
-        <h2 class="section-title">Resumen general</h2>
-
-        <div class="summary">
-          <article class="summary-card income">
-            <h3>Ingresos</h3>
-            <p id="total-income">$0</p>
-          </article>
-
-          <article class="summary-card expense">
-            <h3>Gastos</h3>
-            <p id="total-expense">$0</p>
-          </article>
-
-          <article class="summary-card balance">
-            <h3>Balance</h3>
-            <p id="total-balance">$0</p>
-          </article>
-        </div>
-      </section>
 
       <!-- FORMULARIO -->
       <section class="card">
@@ -203,6 +203,39 @@
 
           </div>
         </section>
+
+
+                <!-- TARJETAS ANALÍTICAS -->
+        <section class="card analytics-section">
+          <h2 class="section-title">📊 Análisis financiero</h2>
+          <div id="analytic-cards" class="analytic-cards-grid">
+            <!-- Generado por renderAnalyticCards() -->
+          </div>
+        </section>
+
+        <!-- EVOLUCIÓN HISTÓRICA -->
+        <section class="card">
+          <h2 class="section-title">Evolución histórica — últimos 6 meses</h2>
+          <div class="chart-container">
+            <canvas id="evolution-chart"></canvas>
+          </div>
+        </section>
+
+        <!-- BALANCE ACUMULADO MENSUAL -->
+        <section class="card">
+          <h2 class="section-title">Balance acumulado mensual</h2>
+          <div class="chart-container">
+            <canvas id="balance-chart"></canvas>
+          </div>
+        </section>
+
+        <!-- TENDENCIA FINANCIERA -->
+        <section class="card">
+          <h2 class="section-title">Tendencia financiera</h2>
+          <div class="chart-container">
+            <canvas id="tendency-chart"></canvas>
+          </div>
+        </section>
       <!-- FILTROS -->
       <section class="card">
         <h2 class="section-title">Filtros</h2>
@@ -282,6 +315,7 @@
     </main>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="src/js/app.js"></script>
 </body>
 </html>
