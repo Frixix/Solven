@@ -130,8 +130,20 @@ function loadTransactions() {
   console.groupEnd();
 }
 
-function saveTransactions() {
-  localStorage.setItem("transactions", JSON.stringify(transactions));
+async function saveTransactionToSupabase(transaction) {
+
+  const { data, error } = await supabaseClient
+    .from("transactions")
+    .insert([transaction]);
+
+  if (error) {
+    console.error("Error guardando en Supabase:", error);
+    return false;
+  }
+
+  console.log("Transacción guardada:", data);
+
+  return true;
 }
 
 function saveGoals() {
@@ -496,7 +508,7 @@ function updateUI() {
 // ==========================
 // EVENTOS
 // ==========================
-form.addEventListener("submit", (e) => {
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const data = {
     type: form.type.value, amount: Number(form.amount.value),
@@ -512,7 +524,16 @@ form.addEventListener("submit", (e) => {
     );
     editingId = null;
   } else {
-    transactions.push(createTransaction(data));
+    const newTransaction = createTransaction(data);
+
+    const success = await saveTransactionToSupabase(newTransaction);
+
+    if (!success) {
+      alert("No se pudo guardar en Supabase");
+      return;
+    }
+
+    transactions.push(newTransaction);
   }
 
   saveTransactions();
