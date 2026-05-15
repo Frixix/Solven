@@ -130,6 +130,10 @@ function loadTransactions() {
   console.groupEnd();
 }
 
+function saveTransactions() {
+  localStorage.setItem("transactions", JSON.stringify(transactions));
+}
+
 async function saveTransactionToSupabase(transaction) {
 
   const { data, error } = await supabaseClient
@@ -277,12 +281,15 @@ function changeMonth(direction) {
 // ==========================
 function createTransaction(data) {
   const { year, month } = parseDateString(data.date);
-  return {
+    return {
     id: Date.now(),
-    type: data.type, amount: data.amount,
-    category: data.category, description: data.description,
-    date: data.date, month, year,
-    createdAt: new Date().toISOString(),
+    type: data.type,
+    amount: data.amount,
+    category: data.category,
+    description: data.description,
+    date: data.date,
+    month,
+    year,
   };
 }
 
